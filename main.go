@@ -8,7 +8,6 @@ import (
 	"sync/atomic"
 
 	"github.com/MelonCaully/halalRoutes/internal/database"
-	"github.com/MelonCaully/halalRoutes/internal/handlers"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
@@ -32,19 +31,27 @@ func main() {
 		log.Fatal("DB_URL must be set")
 	}
 
+	platform := os.Getenv("PLATFORM")
+	if platform == "" {
+		log.Fatal("PLATFORM must be set")
+	}
+
 	dbConn, err := sql.Open("postgres", dbURL)
 	if err != nil {
 		log.Fatalf("could not connect to database using '%s': %v", dbURL, err)
 	}
 	defer dbConn.Close()
 
-	//dbQueries := database.New(dbConn)
-	//apiCfg := apiConfig{
-	//	db: dbQueries,
-	//}
+	dbQueries := database.New(dbConn)
+	apiCfg := apiConfig{
+		fileserverHits: atomic.Int32{},
+		db:             dbQueries,
+		platform:       platform,
+	}
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /api/healthz", handlers.HandlerHealthz) // healthz endpoint
+	mux.HandleFunc("GET /api/healthz", handlerHealthz)           // healthz endpoint
+	mux.HandleFunc("POST /api/users", apiCfg.handlerCreateUsers) // users endpoint
 
 	server := &http.Server{
 		Handler: mux,

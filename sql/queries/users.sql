@@ -8,3 +8,6 @@ VALUES (
     NOW()
 )
 RETURNING *;
+
+-- name: DeleteUsers :exec
+DELETE FROM users;
