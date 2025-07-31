@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"testing"
 
 	"github.com/joho/godotenv"
 )
@@ -75,6 +76,6 @@ func testAPIKeys() {
 	fmt.Println("✨ API Key testing complete!")
 }
 
-func main() {
+func TestApiKeys(t *testing.T) {
 	testAPIKeys()
 }
