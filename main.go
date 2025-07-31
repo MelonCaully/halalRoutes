@@ -66,10 +66,13 @@ func main() {
 
 	err = scraper.ScraperHMA(context.Background(), database.New(dbConn))
 	if err != nil {
-		log.Fatalf("Scraping failed: %v", err)
+		log.Fatalf("Scraping failed for restaurants: %v", err)
 	}
 
-	log.Println("Scraping Complete!")
+	err = scraper.ScraperCrimeToronto(context.Background(), database.New(dbConn))
+	if err != nil {
+		log.Fatalf("Scraping failed for crime: %v", err)
+	}
 
 	log.Printf("Serving files on port: %s", port)
 	log.Fatal(server.ListenAndServe())

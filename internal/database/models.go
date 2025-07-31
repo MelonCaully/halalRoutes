@@ -11,6 +11,17 @@ import (
 	"github.com/google/uuid"
 )
 
+type CrimeStat struct {
+	ID            uuid.UUID
+	Neighborhood  string
+	TotalCrime    int32
+	ViolentCrime  int32
+	PropertyCrime int32
+	Source        string
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
+}
+
 type HalalRestaurant struct {
 	ID        uuid.UUID
 	Name      string
@@ -20,15 +31,6 @@ type HalalRestaurant struct {
 	Source    string
 	CreatedAt time.Time
 	UpdatedAt time.Time
-}
-
-type NeighborhoodSafety struct {
-	ID           uuid.UUID
-	Neighborhood string
-	SafetyScore  sql.NullInt32
-	Source       string
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
 }
 
 type User struct {

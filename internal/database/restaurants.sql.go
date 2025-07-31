@@ -23,6 +23,7 @@ VALUES (
     $6,
     $7
 )
+RETURNING id, name, region, address, website, source, created_at, updated_at
 `
 
 type CreateRestaurantParams struct {
