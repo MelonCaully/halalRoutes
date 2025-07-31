@@ -25,7 +25,7 @@ func main() {
 
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Println("Warning: .env file not found, relying on Render-provided environment variables")
 	}
 
 	dbURL := os.Getenv("DB_URL")
