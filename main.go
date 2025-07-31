@@ -64,15 +64,18 @@ func main() {
 		Handler: mux,
 		Addr:    ":" + port,
 	}
-
-	err = scraper.ScraperHMA(context.Background(), database.New(dbConn))
-	if err != nil {
-		log.Fatalf("Scraping failed for restaurants: %v", err)
+	if platform == "dev" {
+		err = scraper.ScraperHMA(context.Background(), database.New(dbConn))
+		if err != nil {
+			log.Fatalf("Scraping failed for restaurants: %v", err)
+		}
 	}
 
-	err = scraper.ScraperCrimeToronto(context.Background(), database.New(dbConn))
-	if err != nil {
-		log.Fatalf("Scraping failed for crime: %v", err)
+	if platform == "dev" {
+		err = scraper.ScraperCrimeToronto(context.Background(), database.New(dbConn))
+		if err != nil {
+			log.Fatalf("Scraping failed for crime: %v", err)
+		}
 	}
 
 	log.Printf("Serving files on port: %s", port)
