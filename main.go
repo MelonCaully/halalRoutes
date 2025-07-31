@@ -58,6 +58,7 @@ func main() {
 	mux.HandleFunc("GET /api/weather", apiCfg.WeatherHandler)                  // weather endpoint
 	mux.HandleFunc("GET /api/places", apiCfg.PlacesHandler)                    // places endpoint
 	mux.HandleFunc("POST /api/recommendations", apiCfg.RecommendationsHandler) // AI recommendations endpoint
+	mux.HandleFunc("GET /api/crime", apiCfg.handlerCrimeStats)                 // crime endpiont
 
 	server := &http.Server{
 		Handler: mux,

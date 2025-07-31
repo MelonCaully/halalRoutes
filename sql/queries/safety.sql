@@ -11,3 +11,6 @@ VALUES(
     NOW()
 )
 RETURNING *;
+
+-- name: GetAllCrimeStats :many
+SELECT * FROM crime_stats ORDER BY neighborhood;

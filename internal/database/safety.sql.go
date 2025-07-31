@@ -53,3 +53,39 @@ func (q *Queries) CreateCrimeStats(ctx context.Context, arg CreateCrimeStatsPara
 	)
 	return i, err
 }
+
+const getAllCrimeStats = `-- name: GetAllCrimeStats :many
+SELECT id, neighborhood, total_crime, violent_crime, property_crime, source, created_at, updated_at FROM crime_stats ORDER BY neighborhood
+`
+
+func (q *Queries) GetAllCrimeStats(ctx context.Context) ([]CrimeStat, error) {
+	rows, err := q.db.QueryContext(ctx, getAllCrimeStats)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []CrimeStat
+	for rows.Next() {
+		var i CrimeStat
+		if err := rows.Scan(
+			&i.ID,
+			&i.Neighborhood,
+			&i.TotalCrime,
+			&i.ViolentCrime,
+			&i.PropertyCrime,
+			&i.Source,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
