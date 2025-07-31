@@ -50,9 +50,12 @@ func main() {
 	}
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /api/healthz", handlerHealthz)           // healthz endpoint
-	mux.HandleFunc("POST /api/users", apiCfg.handlerCreateUsers) // users endpoint
-	mux.HandleFunc("POST /api/login", apiCfg.handlerLogin)       // login endpoint
+	mux.HandleFunc("GET /api/healthz", handlerHealthz)                      // healthz endpoint
+	mux.HandleFunc("POST /api/users", apiCfg.handlerCreateUsers)            // users endpoint
+	mux.HandleFunc("POST /api/login", apiCfg.handlerLogin)                  // login endpoint
+	mux.HandleFunc("GET /api/weather", apiCfg.WeatherHandler)               // weather endpoint
+	mux.HandleFunc("GET /api/places", apiCfg.PlacesHandler)                 // places endpoint
+	mux.HandleFunc("POST /api/recommendations", apiCfg.RecommendationsHandler) // AI recommendations endpoint
 
 	server := &http.Server{
 		Handler: mux,
