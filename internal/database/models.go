@@ -5,10 +5,31 @@
 package database
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
 )
+
+type HalalRestaurant struct {
+	ID        uuid.UUID
+	Name      string
+	Region    string
+	Address   sql.NullString
+	Website   string
+	Source    string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+type NeighborhoodSafety struct {
+	ID           uuid.UUID
+	Neighborhood string
+	SafetyScore  sql.NullInt32
+	Source       string
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+}
 
 type User struct {
 	ID        uuid.UUID

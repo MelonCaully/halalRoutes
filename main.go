@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"log"
 	"net/http"
@@ -8,6 +9,7 @@ import (
 	"sync/atomic"
 
 	"github.com/MelonCaully/halalRoutes/internal/database"
+	"github.com/MelonCaully/halalRoutes/internal/scraper"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
@@ -28,12 +30,12 @@ func main() {
 
 	dbURL := os.Getenv("DB_URL")
 	if dbURL == "" {
-		log.Fatal("DB_URL must be set")
+		log.Fatal("DB_URL not set in enviroment")
 	}
 
 	platform := os.Getenv("PLATFORM")
 	if platform == "" {
-		log.Fatal("PLATFORM must be set")
+		log.Fatal("PLATFORM not set in enviroment")
 	}
 
 	dbConn, err := sql.Open("postgres", dbURL)
@@ -50,17 +52,24 @@ func main() {
 	}
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /api/healthz", handlerHealthz)                      // healthz endpoint
-	mux.HandleFunc("POST /api/users", apiCfg.handlerCreateUsers)            // users endpoint
-	mux.HandleFunc("POST /api/login", apiCfg.handlerLogin)                  // login endpoint
-	mux.HandleFunc("GET /api/weather", apiCfg.WeatherHandler)               // weather endpoint
-	mux.HandleFunc("GET /api/places", apiCfg.PlacesHandler)                 // places endpoint
+	mux.HandleFunc("GET /api/healthz", handlerHealthz)                         // healthz endpoint
+	mux.HandleFunc("POST /api/users", apiCfg.handlerCreateUsers)               // users endpoint
+	mux.HandleFunc("POST /api/login", apiCfg.handlerLogin)                     // login endpoint
+	mux.HandleFunc("GET /api/weather", apiCfg.WeatherHandler)                  // weather endpoint
+	mux.HandleFunc("GET /api/places", apiCfg.PlacesHandler)                    // places endpoint
 	mux.HandleFunc("POST /api/recommendations", apiCfg.RecommendationsHandler) // AI recommendations endpoint
 
 	server := &http.Server{
 		Handler: mux,
 		Addr:    ":" + port,
 	}
+
+	err = scraper.ScraperHMA(context.Background(), database.New(dbConn))
+	if err != nil {
+		log.Fatalf("Scraping failed: %v", err)
+	}
+
+	log.Println("Scraping Complete!")
 
 	log.Printf("Serving files on port: %s", port)
 	log.Fatal(server.ListenAndServe())
